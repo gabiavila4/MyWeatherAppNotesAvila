@@ -18,7 +18,11 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var humOutlet: UILabel!
     
+    @IBOutlet weak var winspeOutlet: UILabel!
     
+    @IBOutlet weak var windirOutlet: UILabel!
+    
+    @IBOutlet weak var sunsetOutlet: UILabel!
     
     var s = ""
     
@@ -26,7 +30,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         getWeather()
-        
+        // Example usage
+        let timestamp: TimeInterval = 1705445170 // Replace this with your timestamp
+        let formattedTime = convertTimestampToTime(timestamp: timestamp)
+        print("Formatted Time: \(formattedTime)")
+        sunsetOutlet.text = "Formatted Time: \(formattedTime)"
     }
     
     func getWeather(){
@@ -49,29 +57,29 @@ class ViewController: UIViewController {
                     if let jsonObj = try? JSONSerialization.jsonObject(with: d, options: .allowFragments) as? NSDictionary {
                         // print the jsonObj to see structure
                         print(jsonObj)
-                        if let main = jsonObj.value(forKey: "main") as? NSDictionary{
-                            if let temp = main.value(forKey: "temp") as? Double{
+            if let main = jsonObj.value(forKey: "main") as? NSDictionary{
+             if let temp = main.value(forKey: "temp") as? Double{
                                 print(temp)
                                 
-                                //making it happen on the main thread, waiting for data before it shows up on screen
-                                DispatchQueue.main.async {
-                                    self.weatherLabel1.text = "\(temp)"
-                                }
+            //making it happen on the main thread, waiting for data before it shows up on screen
+             DispatchQueue.main.async {
+        self.weatherLabel1.text = "\(temp)"
+                      }
                                 
                             }
-                            if let maxtemp = main.value(forKey: "temp_max") as? Double{
+           if let maxtemp = main.value(forKey: "temp_max") as? Double{
                                 print (maxtemp)
                                 DispatchQueue.main.async {
                                     self.maxOutlet.text = "Max: \(maxtemp)"
                                 }
                             }
-                            if let mintemp = main.value(forKey: "temp_min") as? Double{
+           if let mintemp = main.value(forKey: "temp_min") as? Double{
                                 print(mintemp)
                                 DispatchQueue.main.async {
                                     self.minOutlet.text = "Min: \(mintemp)"
                                 }
                             }
-                            if let humlevel = main.value(forKey: "humidity") as? Double{
+               if let humlevel = main.value(forKey: "humidity") as? Double{
                                 print(humlevel)
                                 DispatchQueue.main.async {
                                     self.humOutlet.text = "Humidity Level: \(humlevel)"
@@ -81,6 +89,54 @@ class ViewController: UIViewController {
                             
                             
                         }
+ if let wind = jsonObj.value(forKey: "wind") as? NSDictionary{
+       if let speed = wind.value(forKey: "speed") as? Double{
+       print(speed)
+                                
+        DispatchQueue.main.async {
+            self.winspeOutlet.text = "Wind Speed: \(speed)"
+                            }
+                        }
+     if let degree = wind.value(forKey: "deg") as? Double{
+     print(degree)
+                              
+      DispatchQueue.main.async {
+          if degree < 90 && degree > 0{
+              self.windirOutlet.text = "Direction: Northeast"
+          }else if degree == 90
+          {
+              self.windirOutlet.text = "Direction: North"
+          }else if degree == 0
+          {
+              self.windirOutlet.text = "Direction: East"
+          }else if degree < 180
+          {
+              self.windirOutlet.text = "Direction: Northwest"
+          }else if degree == 180
+          {
+              self.windirOutlet.text = "Direction: West"
+          }else if degree < 270
+          {
+              self.windirOutlet.text = "Direction: Southwest"
+          }else if degree == 270
+          {
+              self.windirOutlet.text = "Direction: South"
+          }else if degree < 360
+          {
+              self.windirOutlet.text = "Direction: Southeast"
+          }else if degree == 360
+          {
+              self.windirOutlet.text = "Direction: East"
+          }
+         
+                          }
+                      }
+                    }
+                        
+                        
+                        
+                        
+                        
                     }
                 }
                 
@@ -95,19 +151,17 @@ class ViewController: UIViewController {
         
         
     }
-    func convertUnixTimestampToDateTime(timestamp: TimeInterval) -> String {
+    
+    func convertTimestampToTime(timestamp: TimeInterval) -> String {
         let date = Date(timeIntervalSince1970: timestamp)
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        dateFormatter.timeZone = TimeZone(identifier: "CST") // Set the desired time zone
+        dateFormatter.timeStyle = .medium
+        dateFormatter.dateStyle = .none
         
-        return dateFormatter.string(from: date) + "CST"
+        return dateFormatter.string(from: date)
     }
 
-    let timestamp: TimeInterval = 1705012831 // Replace this with your Unix timestamp
-    let formattedDateTime = convertUnixTimestampToDateTime(timestamp: timestamp)
-
-    print(formattedDateTime)
+    
     
 }
